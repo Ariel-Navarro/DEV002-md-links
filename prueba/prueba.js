@@ -13,7 +13,7 @@ const path=require('path');
 // if (path.existsSync("/prueba/prueba")) {
 //   console.log('si existe')
 // }
-
+import chalk from 'chalk';
 const pathValidate = route => existsSync(route);
-console.log(pathValidate)
+console.log(chalk.bgCyan(pathValidate))
 
