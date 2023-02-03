@@ -6,14 +6,12 @@
 //     console.log(data)
 //   }
 // })
-const path=require('path');
+// const path=require('path');
 // pathabsolute=path.resolve('prueba')
 // console.log(pathabsolute);
 
 // if (path.existsSync("/prueba/prueba")) {
 //   console.log('si existe')
 // }
-import chalk from 'chalk';
-const pathValidate = route => existsSync(route);
-console.log(chalk.bgCyan(pathValidate))
+
 
