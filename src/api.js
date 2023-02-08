@@ -50,25 +50,40 @@ const readFileMd = (pathParam) => fs.readFile(pathParam, 'utf8', (err, data) => 
 const readDirectory = (pathParam) => fs.readdirSync(pathParam);
 // console.log(readDirectory('../prueba'))
 
-// Buscar un archivo .md para guardarlos en un array.
-const fileWalker = (pathParam) => {
-  const pathExist = existsPath(pathParam);
-  const pathAbsolute = absolutePath(pathExist);
+fileWalker = (pathParam) => {
   let addArray = [];
-  if (pathAbsolute(pathAbsolute) && isFile(pathParam)){
-    if (fileMd(pathAbsolute)){
-      addArray.push(pathAbsolute);
-    }
+  const existeOrNot = existsPath(pathParam);
+  if (existeOrNot == true) {
+    const conversor = absolutePath(existeOrNot)
+    console.log(conversor)
+    return addArray.push(conversor)
   }else {
-    const readDirectory = readDirectory(pathParam);
-    readDirectory.map((pathParam) => {
-      addArray = addArray.concat(fileWalker(path.join(pathAbsolute, pathParam)));
-    });
+    console.log('else')
   }
-  return addArray;
+  return addArray
 }
+fileMd('../prueba/prueba.js')
 
+// Buscar un archivo .md para guardarlos en un array.
+// const fileWalker = (pathParam) => {
+//   const pathExist = existsPath(pathParam);
+//   const pathAbsolute = absolutePath(pathExist);
+//   let addArray = [];
+//   if (path.isAbsolute(pathAbsolute) && isFile(pathParam)) {
+//     if (fileMd(pathAbsolute)) {
+//       addArray.push(pathAbsolute);
+//     }
+//   } else {
+//     const readDirectory = readDirectory(pathParam);
+//     readDirectory.map((pathParam) => {
+//       addArray = addArray.concat(fileWalker(path.join(pathAbsolute, pathParam)));
+//     });
+//   }
+//   return addArray;
 
+// }
+
+// fileWalker('../prueba/prueba.md')
 
 
 
