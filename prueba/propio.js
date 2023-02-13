@@ -92,11 +92,9 @@ const foundLinks = (ruta) => {
   const links = fileContent && fileContent.match(linkPattern);
 
   if (links) {
-    let arrayLinks = [];
-    arrayLinks = arrayLinks.concat(links)
-    console.log(arrayLinks)
+    const json = JSON.stringify(links, null, 2);
     console.log('Se encontraron los siguientes enlaces:');
-    console.log(`links: ${links}`);
+    console.log(json);
   } else {
     console.log('No se encontraron enlaces en el archivo.');
   }
@@ -104,6 +102,7 @@ const foundLinks = (ruta) => {
 
 
 
-console.log(foundLinks('../prueba/prueba2/hijoPrueba2/archivo.md'))
+
+console.log(foundLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3/nietoPrueba3.md'))
 
 
