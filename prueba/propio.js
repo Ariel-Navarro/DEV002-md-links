@@ -10,15 +10,15 @@ const absolutePath = (pathParam) => path.isAbsolute(pathParam) ? pathParam : pat
 // console.log(absolutePath('../prueba/prueba.js'));
 
 // ¿El parametro es un directorio?
-// const isDirectory = (pathParam) => fs.statSync(pathParam).isDirectory();
+const isDirectory = (pathParam) => fs.statSync(pathParam).isDirectory();
 // console.log(isDirectory('../prueba'));
 
 // ¿El parametro es un archivo?
-// const isFile = (pathParam) => fs.statSync(pathParam).isFile();
+const isFile = (pathParam) => fs.statSync(pathParam).isFile();
 // console.log(isFile('../prueba/prueba.txt'));
 
 // ¿Tiene extensión .md?
-// const fileMd = (pathParam) => path.extname(pathParam) === '.md';
+const fileMd = (pathParam) => path.extname(pathParam) === '.md';
 // console.log(fileMd('../prueba/prueba.js'));
 
 // const files = readDirectory('dir/b');
@@ -35,62 +35,17 @@ const readFileMd = (pathParam) => {
     console.error(err);
   }
 };
+
 // readFileMd('../prueba/prueba.md');
 
 // Leer el directorio
 const readDirectory = (pathParam) => fs.readdirSync(pathParam);
 // console.log(readDirectory('../prueba'));
 
-
-
-// const fileWalker = (pathParam) => {
-//   let addArray = [];
-//   const isFil = isFile(pathParam);
-//   if (existsPath(pathParam) && isFil) {
-//     if (fileMd(pathParam)) {
-//       addArray.push(absolutePath(pathParam));
-//     }
-
-//   } else {
-//     if (isDirectory(pathParam)) {
-//       const files = readDirectory(pathParam);
-//       const filesMd = files.filter(file => fileMd(path.join(pathParam, file)));
-//       addArray = addArray.concat(filesMd);
-//     }
-//   }
-//   return addArray
-// }
-
-
-// const fileWalker = (pathParam) => {
-//   let addArray = [];
-//   const isFil = isFile(pathParam);
-//   if (existsPath(pathParam) && isFil) {
-//     if (fileMd(pathParam)) {
-//       addArray.push(absolutePath(pathParam));
-//     }
-
-//   } else {
-//     if (isDirectory(pathParam)) {
-//       const files = readDirectory(pathParam);
-//       const filesMd = files.filter(file => fileMd(path.join(pathParam, file)));
-//       addArray = addArray.concat(filesMd);
-
-//       // Llamada recursiva para procesar subdirectorios
-//       files.filter(file => isDirectory(path.join(pathParam, file)))
-//         .forEach(dir => addArray = addArray.concat(fileWalker(path.join(pathParam, dir))));
-//     }
-//   }
-//   return addArray
-// }
-
+// Función recursiva--------------------------------------------------------
 
 const fileWalkerRecursive = (dir) => {
   let addArray = [];
-
-  const isFile = (pathParam) => fs.statSync(pathParam).isFile();
-  const isDirectory = (pathParam) => fs.statSync(pathParam).isDirectory();
-  const fileMd = (pathParam) => path.extname(pathParam) === '.md';
 
   const processFile = (file) => {
     if (fileMd(file)) {
@@ -119,27 +74,36 @@ const fileWalkerRecursive = (dir) => {
   return addArray;
 };
 
-console.log(fileWalkerRecursive('../prueba'));
-
-
-
-// const mdFiles = fileWalker('../prueba');
-// console.log(mdFiles)
+// console.log(fileWalkerRecursive('../prueba'));
 
 // --------ENCONTRAR LINKS -----------------------------------
+const foundLinks = (ruta) => {
+  const readFileMd = (pathParam) => {
+    try {
+      const data = fs.readFileSync(pathParam, 'utf8');
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-// const fs = require('fs');
+  const fileContent = readFileMd(ruta);
+  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const links = fileContent && fileContent.match(linkPattern);
 
-// const fileContent = fs.readFileSync('/ruta/al/archivo.md', 'utf-8');
+  if (links) {
+    let arrayLinks = [];
+    arrayLinks = arrayLinks.concat(links)
+    console.log(arrayLinks)
+    console.log('Se encontraron los siguientes enlaces:');
+    console.log(`links: ${links}`);
+  } else {
+    console.log('No se encontraron enlaces en el archivo.');
+  }
+}
 
-// const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
 
-// const links = fileContent.match(linkPattern);
 
-// if (links) {
-//   console.log('Se encontraron los siguientes enlaces:');
-//   console.log(links);
-// } else {
-//   console.log('No se encontraron enlaces en el archivo.');
-// }
+console.log(foundLinks('../prueba/prueba2/hijoPrueba2/archivo.md'))
+
 
