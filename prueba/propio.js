@@ -44,40 +44,69 @@ const readDirectory = (pathParam) => fs.readdirSync(pathParam);
 
 // Función recursiva--------------------------------------------------------
 
-const fileWalkerRecursive = (dir) => {
-  let addArray = [];
+// const fileWalkerRecursive = (dir) => {
+//   let addArray = [];
 
-  const processFile = (file) => {
-    if (fileMd(file)) {
-      addArray.push(absolutePath(file));
-    }
-  };
+//   const processFile = (file) => {
+//     if (fileMd(file)) {
+//       addArray.push(absolutePath(file));
+//     }
+//   };
 
-  const processDirectory = (directory) => {
-    const files = fs.readdirSync(directory);
+//   const processDirectory = (directory) => {
+//     const files = fs.readdirSync(directory);
 
-    for (const file of files) {
-      const filePath = path.join(directory, file);
+//     for (const file of files) {
+//       const filePath = path.join(directory, file);
 
-      if (isFile(filePath)) {
-        processFile(filePath);
-      }
+//       if (isFile(filePath)) {
+//         processFile(filePath);
+//       }
 
-      if (isDirectory(filePath)) {
-        const subdirectoryFiles = fileWalkerRecursive(filePath);
-        addArray = addArray.concat(subdirectoryFiles);
-      }
-    }
-  };
+//       if (isDirectory(filePath)) {
+//         const subdirectoryFiles = fileWalkerRecursive(filePath);
+//         addArray = addArray.concat(subdirectoryFiles);
+//       }
+//     }
+//   };
 
-  processDirectory(dir);
-  return addArray;
-};
+//   processDirectory(dir);
+//   return addArray;
+// };
 
-// console.log(fileWalkerRecursive('../prueba'));
+// // console.log(fileWalkerRecursive('../prueba'));
 
-// --------ENCONTRAR LINKS -----------------------------------
-const foundLinks = (ruta) => {
+// // --------ENCONTRAR LINKS -----------------------------------
+// const foundLinks = (ruta) => {
+//   const readFileMd = (pathParam) => {
+//     try {
+//       const data = fs.readFileSync(pathParam, 'utf8');
+//       return data;
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
+
+//   const fileContent = readFileMd(ruta);
+//   const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+//   const links = fileContent && fileContent.match(linkPattern);
+
+//   if (links) {
+//     const json = JSON.stringify(links, null, 2);
+//     console.log('Se encontraron los siguientes enlaces:');
+//     console.log(json);
+//   } else {
+//     console.log('No se encontraron enlaces en el archivo.');
+//   }
+// }
+
+// console.log(foundLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3/nietoPrueba3.md'))
+
+
+const marked = require('marked');
+const { JSDOM } = require('jsdom');
+
+const toHtmlAndExtractLinks = (ruta) => {
   const readFileMd = (pathParam) => {
     try {
       const data = fs.readFileSync(pathParam, 'utf8');
@@ -87,22 +116,50 @@ const foundLinks = (ruta) => {
     }
   };
 
-  const fileContent = readFileMd(ruta);
-  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const links = fileContent && fileContent.match(linkPattern);
+  const recursiveFunction = (route) => {
+    let paths = [];
+    const readDir = fs.readdirSync(route, 'utf8');
+    readDir.forEach((elm) => {
+      const concatPath = path.join(route, elm);
+      console.log(`concatPath:${concatPath}`)
+      console.log("route"+route)
+      console.log("elm:"+elm)
+      if (fs.statSync(concatPath).isDirectory()) {
+        paths = paths.concat(recursiveFunction(concatPath));
+      } else {
+        if (path.extname(concatPath) === '.md') {
+          paths.push(concatPath);
+        }
+      }
+    });
+    console.log(paths)
+    return paths;
+  };
 
-  if (links) {
-    const json = JSON.stringify(links, null, 2);
-    console.log('Se encontraron los siguientes enlaces:');
-    console.log(json);
-  } else {
-    console.log('No se encontraron enlaces en el archivo.');
-  }
-}
+  const arrDom = [];
+  recursiveFunction(ruta).forEach((elm) => {
+    const readFiles = fs.readFileSync(elm, 'utf8');
+    const fileToHtml = marked.parse(readFiles);
+    const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+    dom.forEach((el) => {
+      if (el.href.slice(0, 3) === 'htt') {
+        arrDom.push({
+          href: el.href,
+          text: (el.textContent).slice(0, 50),
+          file: elm,
+        });
+      }
+    });
+  });
+  return arrDom.flat(1);
+};
+
+console.log(toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3')); // Cambiar por la ruta correspondiente a tus archivos
+
+// Status del link --------------------------------------------------------------------
+
+const axios = require('axios');
 
 
-
-
-console.log(foundLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3/nietoPrueba3.md'))
 
 

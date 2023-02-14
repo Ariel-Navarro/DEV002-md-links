@@ -10,7 +10,11 @@
     "commit": "51e941edf1cc991930aefd7dd9c406a7c43741c1"
   },
   "dependencies": {
-    "all": "^0.0.0"
+    "all": "^0.0.0",
+    "axios": "^1.3.3",
+    "chalk": "^5.2.0",
+    "jsdom": "^21.1.0",
+    "marked": "^4.2.12"
   },
   "scripts": {
     "pretest": "npm run htmlhint && npm run eslint && npm run stylelint",

@@ -18,23 +18,23 @@ const fs = require('fs');
 // -------------FUNCIONES------------------------------
 // ¿Existe la ruta?
 const existsPath = (pathParam) => fs.existsSync(pathParam)
-// console.log(existsPath('../prueba/prueba.js'))
+console.log(existsPath('../prueba/prueba.js'))
 
 // ¿Es una ruta absoluta? Si no lo es, lo convierte a absoluta
 const absolutePath = (pathParam) => path.isAbsolute(pathParam) ? pathParam : path.resolve(pathParam);
-// console.log(absolutePath('../prueba/prueba.js'))
+console.log(absolutePath('../prueba/prueba.js'))
 
 // ¿El parametro es un directorio?
 const isDirectory = (pathParam) => fs.statSync(pathParam).isDirectory();
-// console.log(isDirectory('../prueba'))
+console.log(isDirectory('../prueba'))
 
 // ¿El parametro es un archivo?
 const isFile = (pathParam) => fs.statSync(pathParam).isFile();
-// console.log(isFile('../prueba/prueba.txt'))
+console.log(isFile('../prueba/prueba.txt'))
 
 // ¿Tiene extención .md?
 const fileMd = (pathParam) => path.extname(pathParam) === '.md';
-// console.log(fileMd('../prueba/prueba.js'));
+console.log(fileMd('../prueba/prueba.js'));
 
 // Leer el archivo
 const readFileMd = (pathParam) => fs.readFile(pathParam, 'utf8', (err, data) => {
@@ -44,17 +44,17 @@ const readFileMd = (pathParam) => fs.readFile(pathParam, 'utf8', (err, data) => 
   }
   console.log(data);
 });
-// console.log(readFileMd('../prueba/prueba.md'));
+console.log(readFileMd('../prueba/prueba.md'));
 
 // Leer el directorio
 const readDirectory = (pathParam) => fs.readdirSync(pathParam);
-// console.log(readDirectory('../prueba'))
+console.log(readDirectory('../prueba'))
 
 fileWalker = (pathParam) => {
   let addArray = [];
   const existeOrNot = existsPath(pathParam);
   if (existeOrNot == true) {
-    const conversor = absolutePath(existeOrNot)
+    const conversor = absolutePath(pathParam)
     console.log(conversor)
     return addArray.push(conversor)
   }else {
@@ -62,7 +62,7 @@ fileWalker = (pathParam) => {
   }
   return addArray
 }
-fileMd('../prueba/prueba.js')
+fileWalker('../prueba/prueba.js')
 
 // Buscar un archivo .md para guardarlos en un array.
 // const fileWalker = (pathParam) => {
