@@ -27,14 +27,23 @@ const fileMd = (pathParam) => path.extname(pathParam) === '.md';
 
 
 // Leer el archivo
-const readFileMd = (pathParam) => {
-  try {
-    const data = fs.readFileSync(pathParam, 'utf8');
-    console.log(data);
-  } catch (err) {
-    console.error(err);
-  }
-};
+// const readFileMd = (pathParam) => {
+//   return new Promise((resolve, reject) => {
+//     fs.readFile(pathParam, 'utf8', (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(data);
+//       }
+//     });
+//   });
+// };
+
+// ejemplo de uso
+// readFileMd('../prueba/prueba.md')
+//   .then((data) => console.log("data:"+data))
+//   .catch((err) => console.error(err));
+
 
 // readFileMd('../prueba/prueba.md');
 
@@ -108,12 +117,15 @@ const { JSDOM } = require('jsdom');
 
 const toHtmlAndExtractLinks = (ruta) => {
   const readFileMd = (pathParam) => {
-    try {
-      const data = fs.readFileSync(pathParam, 'utf8');
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
+    return new Promise((resolve, reject) => {
+      fs.readFile(pathParam, 'utf8', (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
   };
 
   const recursiveFunction = (route) => {
@@ -137,21 +149,25 @@ const toHtmlAndExtractLinks = (ruta) => {
   };
 
   const arrDom = [];
-  recursiveFunction(ruta).forEach((elm) => {
-    const readFiles = fs.readFileSync(elm, 'utf8');
-    const fileToHtml = marked.parse(readFiles);
-    const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
-    dom.forEach((el) => {
-      if (el.href.slice(0, 3) === 'htt') {
-        arrDom.push({
-          href: el.href,
-          text: (el.textContent).slice(0, 50),
-          file: elm,
-        });
-      }
+  const filePromises = recursiveFunction(ruta).map((elm) => {
+    return readFileMd(elm).then((readFiles) => {
+      const fileToHtml = marked.parse(readFiles);
+      const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+      dom.forEach((el) => {
+        if (el.href.slice(0, 3) === 'htt') {
+          arrDom.push({
+            href: el.href,
+            text: (el.textContent).slice(0, 50),
+            file: elm,
+          });
+        }
+      });
     });
   });
-  return arrDom.flat(1);
+
+  return Promise.all(filePromises).then(() => {
+    return arrDom.flat(1);
+  });
 };
 
 console.log(toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3')); // Cambiar por la ruta correspondiente a tus archivos
