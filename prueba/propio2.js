@@ -67,33 +67,36 @@ toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) =>
 
 const axios = require('axios');
 
-
-const mdLinks = (arrLinks) => {
-  const linksStatus = arrLinks.map((el) => new Promise((resolve) => {
-    const link = () => axios.get(el.href)
-      .then((response) => {
-        if (response.status >= 200 && response.status < 400) {
-          el.message = 'Ok';
-          el.status = response.status;
-          resolve(el);
-        } else {
-          el.message = 'Fail';
-          el.status = response.status;
-          resolve(el);
-        }
-      }).catch(() => {
-        el.message = 'Fail';
-        el.status = 'Error request';
-        resolve(el);
-      });
-    link();
+async function mdLinks(arrLinks) {
+  const results = await Promise.all(arrLinks.map(async (link) => {
+    try {
+      const response = await axios.get(link.href);
+      link.message = 'Ok';
+      link.status = response.status;
+    } catch (error) {
+      link.message = 'Fail';
+      link.status = error.response ? error.response.status : 'Error request';
+    }
+    return link;
   }));
-  return Promise.all(linksStatus);
-};
-
-module.export = {
-  mdLinks,
-  recursiveFunction,
-  toHtmlAndExtractLinks,
+  return results;
 }
+
+const links = [
+  { href: 'https://www.google.com', text: 'Google' },
+  { href: 'https://www.github.com', text: 'GitHub' },
+];
+
+mdLinks(links).then((results) => {
+  console.log(results);
+}).catch((err) => {
+  console.error(err);
+});
+
+
+// module.export = {
+//   mdLinks,
+//   recursiveFunction,
+//   toHtmlAndExtractLinks,
+// }
 
