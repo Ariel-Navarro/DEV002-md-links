@@ -115,60 +115,67 @@ const readDirectory = (pathParam) => fs.readdirSync(pathParam);
 const marked = require('marked');
 const { JSDOM } = require('jsdom');
 
-const toHtmlAndExtractLinks = (ruta) => {
-  const readFileMd = (pathParam) => {
-    return new Promise((resolve, reject) => {
-      fs.readFile(pathParam, 'utf8', (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-  };
-
-  const recursiveFunction = (route) => {
-    let paths = [];
-    const readDir = fs.readdirSync(route, 'utf8');
-    readDir.forEach((elm) => {
-      const concatPath = path.join(route, elm);
-      console.log(`concatPath:${concatPath}`)
-      console.log("route"+route)
-      console.log("elm:"+elm)
-      if (fs.statSync(concatPath).isDirectory()) {
-        paths = paths.concat(recursiveFunction(concatPath));
-      } else {
-        if (path.extname(concatPath) === '.md') {
-          paths.push(concatPath);
-        }
+const toHtmlAndExtractLinks = (routeParameter) => {
+  const arrDom = [];
+  recursiveFunction(routeParameter).forEach((elm) => {
+    const readFiles = fs.readFileSync(elm, 'utf8');
+    const fileToHtml = marked.parse(readFiles);
+    const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+    dom.forEach((el) => {
+      if (el.href.slice(0, 3) === 'htt') {
+        arrDom.push({
+          href: el.href,
+          text: (el.textContent).slice(0, 50),
+          file: elm,
+        });
       }
     });
-    console.log(paths)
-    return paths;
-  };
-
-  const arrDom = [];
-  const filePromises = recursiveFunction(ruta).map((elm) => {
-    return readFileMd(elm).then((readFiles) => {
-      const fileToHtml = marked.parse(readFiles);
-      const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
-      dom.forEach((el) => {
-        if (el.href.slice(0, 3) === 'htt') {
-          arrDom.push({
-            href: el.href,
-            text: (el.textContent).slice(0, 50),
-            file: elm,
-          });
-        }
-      });
-    });
   });
-
-  return Promise.all(filePromises).then(() => {
-    return arrDom.flat(1);
-  });
+  return arrDom.flat(1);
 };
+
+const recursiveFunction = (route) => {
+  let paths = [];
+  const readDir = fs.readdirSync(route, 'utf8');
+  readDir.forEach((elm) => {
+    const concatPath = path.join(route, elm);
+    console.log(`concatPath:${concatPath}`)
+    console.log("route" + route)
+    console.log("elm:" + elm)
+    if (fs.statSync(concatPath).isDirectory()) {
+      paths = paths.concat(recursiveFunction(concatPath));
+    } else {
+      if (path.extname(concatPath) === '.md') {
+        paths.push(concatPath);
+      }
+    }
+  });
+  console.log(paths)
+  return paths;
+};
+
+
+  // const arrDom = [];
+  // const filePromises = recursiveFunction(ruta).map((elm) => {
+  //   return readFileMd(elm).then((readFiles) => {
+  //     const fileToHtml = marked.parse(readFiles);
+  //     const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+  //     dom.forEach((el) => {
+  //       if (el.href.slice(0, 3) === 'htt') {
+  //         arrDom.push({
+  //           href: el.href,
+  //           text: (el.textContent).slice(0, 50),
+  //           file: elm,
+  //         });
+  //       }
+  //     });
+  //   });
+  // });
+
+  // return Promise.all(filePromises).then(() => {
+  //   return arrDom.flat(1);
+  // });
+
 
 console.log(toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nietoDePrueba3')); // Cambiar por la ruta correspondiente a tus archivos
 
@@ -177,5 +184,28 @@ console.log(toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3/nieto
 const axios = require('axios');
 
 
+const mdLinks = (arrLinks) => {
+  const linksStatus = arrLinks.map((el) => new Promise((resolve) => {
+    const link = () => axios.get(el.href)
+      .then((response) => {
+        if (response.status >= 200 && response.status < 400) {
+          el.message = 'Ok';
+          el.status = response.status;
+          resolve(el);
+        } else {
+          el.message = 'Fail';
+          el.status = response.status;
+          resolve(el);
+        }
+      }).catch(() => {
+        el.message = 'Fail';
+        el.status = 'Error request';
+        resolve(el);
+      });
+    link();
+  }));
+  return Promise.all(linksStatus);
+};
 
+mdLinks()
 
