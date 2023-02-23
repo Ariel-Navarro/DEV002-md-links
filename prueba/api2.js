@@ -133,26 +133,26 @@ function linkIsActive(arrLinks) {
   }));
 }
 
-// const links = [
-//   { href: 'https://www.google.com', text: 'Google' },
-//   { href: 'https://www.github.com', text: 'GitHub' },
-// ];
+const links = [
+  { href: 'https://www.google.com', text: 'Google' },
+  { href: 'https://www.github.com', text: 'GitHub' },
+];
 
-// linkIsActive(links)
-//   .then((results) => {
-//     console.log(results);
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });
+linkIsActive(links)
+  .then((results) => {
+    console.log(results);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 
-// toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
-//   console.log("Links" *links);
-// }).catch((err) => {
-//   console.error("error" + err);
+toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
+  console.log("Links" *links);
+}).catch((err) => {
+  console.error("error" + err);
 
-// });
+});
 
 module.exports = {
   existsPath,

@@ -1,26 +1,68 @@
-const api = require('./propio2.js');
+const fs = require('fs');
+const path = require('path');
+const marked = require('marked');
+const axios = require('axios');
+const minimist = require('minimist');
 
-const mdLinksIndex = (path, options) => new Promise((resolve, reject) => {
-  if (api.routeExists(path)) {
-    api.absolutePath(path);
-    if ((api.recursiveFunction(path).length) !== 0) {
-      const arrLinks = api.toHtmlAndExtractLinks(path);
-      if (options.validate === true) {
-        api.linkStatus(arrLinks)
-        .then((res) => resolve(res));
-      } else {
-        resolve(arrLinks);
-      }
-    } else {
-      // eslint-disable-next-line prefer-promise-reject-errors
-      reject('No Markdown (.md) files found');
-    }
-  } else {
-    // eslint-disable-next-line prefer-promise-reject-errors
-    reject('The path do not exist. Did you mean --help?');
-  }
-});
+const args = minimist(process.argv.slice(2));
+const filePath = args._[0];
 
-module.exports = {
-  mdLinksIndex,
+if (!filePath) {
+  console.error('Debes proporcionar una ruta de archivo');
+  process.exit(1);
+}
+
+const fileContents = fs.readFileSync(filePath, 'utf8');
+const links = [];
+
+const renderer = new marked.Renderer();
+renderer.link = (href, title, text) => {
+  links.push({
+    href,
+    text: text.slice(0, 50),
+    file: filePath,
+  });
 };
+
+marked(fileContents, { renderer });
+
+if (!args.validate) {
+  console.log(links);
+  process.exit();
+}
+
+async function validateLink(link) {
+  try {
+    const response = await axios.get(link.href);
+    const statusText = response.statusText.toLowerCase();
+    const status = response.status;
+    const ok = (status >= 200 && status < 300) || status === 304;
+
+    return {
+      ...link,
+      status,
+      statusText,
+      ok,
+    };
+  } catch (error) {
+    return {
+      ...link,
+      status: error.response?.status,
+      statusText: error.message,
+      ok: false,
+    };
+  }
+}
+
+(async function main() {
+  const linkPromises = links.map(validateLink);
+  const results = await Promise.all(linkPromises);
+
+  if (args.stats) {
+    console.log(`Total: ${results.length}`);
+    console.log(`Unique: ${new Set(results.map((result) => result.href)).size}`);
+    console.log(`Broken: ${results.filter((result) => !result.ok).length}`);
+  } else {
+    console.log(results);
+  }
+})();
