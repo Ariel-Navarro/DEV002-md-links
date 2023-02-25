@@ -1,22 +1,11 @@
-const api = require('./api');
+const mdLinks = require('./prueba/api2.js');
+const infoTRB = require('./prueba/index.js');
+const chalk = require('chalk');
+const = command =process.argv;
+const = path = procces.argv[2];
+const option1 = command[3];
+const option2 = command[4];
 
-const mdLinks = (path, options) => {
-  return new Promise((resolve, reject) => {
-    // identifica si la ruta existe
-    if (api.existsPath(path)) {
-      // ¿Es una ruta absoluta? Si no lo es, lo convierte a absoluta
-      api.absolutePath(path)
-        // ¿El parametro es un directorio?
-        if (api.recursiveFunction(path).length > 0) {
-          const a = toHtmlAndExtractLinks(path);
-          if (options.validate === true) {
-            api.linkIsActive(a)
-          }
-      }
+if(command.length) {
 
-    } else {
-      // Si no existe la ruta se rechaza la promesa
-      reject('La ruta no existe')
-    }
-  })
-}
+} else if ()
