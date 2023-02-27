@@ -19,9 +19,11 @@
     "minimist": "^1.2.8"
   },
   "scripts": {
+    "htmlhint": "htmlhint",
+    "eslint": "eslint",
+    "stylelint": "stylelint",
     "pretest": "npm run htmlhint && npm run eslint && npm run stylelint",
-    "test": "jest --coverage",
-    "start": "node index.js",
-    "deploy": "gh-pages -d src"
+    "test": "npm run pretest"
   }
 }
+
