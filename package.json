@@ -19,11 +19,16 @@
     "minimist": "^1.2.8"
   },
   "scripts": {
-    "htmlhint": "htmlhint",
-    "eslint": "eslint",
-    "stylelint": "stylelint",
-    "pretest": "npm run htmlhint && npm run eslint && npm run stylelint",
-    "test": "npm run pretest"
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.4.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   }
 }
-
