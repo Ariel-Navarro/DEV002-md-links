@@ -19,7 +19,9 @@
     "minimist": "^1.2.8"
   },
   "scripts": {
-    "test": "jest"
+    "pretest": "eslint .",
+    "test": "jest --coverage",
+    "start": "node index.js"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
