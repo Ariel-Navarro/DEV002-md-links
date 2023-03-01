@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
 const totalLinks = (arrayOfLinks) => {
   const total = arrayOfLinks.length;
@@ -15,12 +15,12 @@ const uniqueLinkStat = (arrLinks) => {
   return `${chalk.rgb(168, 159, 241)('• Unique: ')} ${uniqueLinks.size}`;
 };
 
-
-module.exports = {
+export default {
   totalLinks,
   brokenLinkStat,
   uniqueLinkStat,
 };
+
 
 // const fs = require('fs');
 // const path = require('path');

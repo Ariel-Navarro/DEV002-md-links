@@ -1,33 +1,33 @@
-const path = require('path');
-const fs = require('fs');
-
-const marked = require('marked');
-const { JSDOM } = require('jsdom');
+import path from 'path';
+import { existsSync, statSync, readFile, readdirSync } from 'fs';
+import axios from 'axios';
+import { parse } from 'marked';
+import { JSDOM } from 'jsdom';
 
 // ¿Existe la ruta?
-const existsPath = (pathParam) => fs.existsSync(pathParam);
+export const existsPath = (pathParam) => existsSync(pathParam);
 // console.log(existsPath('../prueba/prueba.js'));
 
 // ¿Es una ruta absoluta? Si no lo es, lo convierte a absoluta
-const absolutePath = (pathParam) => path.isAbsolute(pathParam) ? pathParam : path.resolve(pathParam);
+export const absolutePath = (pathParam) => path.isAbsolute(pathParam) ? pathParam : path.resolve(pathParam);
 // console.log(absolutePath('../prueba/prueba.js'));
 
 // ¿El parametro es un directorio?
-const isDirectory = (pathParam) => fs.statSync(pathParam).isDirectory();
+export const isDirectory = (pathParam) => statSync(pathParam).isDirectory();
 // console.log(isDirectory('../prueba'));
 
 // ¿El parametro es un archivo?
-const isFile = (pathParam) => fs.statSync(pathParam).isFile();
+export const isFile = (pathParam) => statSync(pathParam).isFile();
 // console.log(isFile('../prueba/prueba.txt'));
 
 // ¿Tiene extensión .md?
-const fileMd = (pathParam) => path.extname(pathParam) === '.md';
+export const fileMd = (pathParam) => path.extname(pathParam) === '.md';
 // console.log(fileMd('../prueba/prueba.js'));
 
 // Leer el archivo
-const readFileMd = (pathParam) => {
+export const readFileMd = (pathParam) => {
   return new Promise((resolve, reject) => {
-    fs.readFile(pathParam, 'utf8', (err, data) => {
+    readFile(pathParam, 'utf8', (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -43,23 +43,23 @@ const readFileMd = (pathParam) => {
 //   .catch((err) => console.error(err));
 
 // Leer el directorio
-const readDirectory = (pathParam) => fs.readdirSync(pathParam);
+export const readDirectory = (pathParam) => readdirSync(pathParam);
 // console.log(readDirectory('../prueba'));
 
 
 // Funciones-------------------------------------------
 
 
-const extractHttpLinksFromFile = (ruta) => {
+export const extractHttpLinksFromFile = (ruta) => {
   const concatPath = path.resolve(ruta); // obtiene la ruta absoluta del archivo
   const readFileMd = (pathParam) => {
     return new Promise((resolve, reject) => {
-      fs.readFile(pathParam, 'utf8', (err, data) => {
+      readFile(pathParam, 'utf8', (err, data) => {
         if (err) {
           reject(err);
         } else {
           const paths = []
-          const fileToHtml = marked.parse(data);
+          const fileToHtml = parse(data);
           const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
           dom.forEach((el) => {
             if (el.href.slice(0, 3) === 'htt') {
@@ -80,22 +80,24 @@ const extractHttpLinksFromFile = (ruta) => {
 
 
 
-extractHttpLinksFromFile('./leg.md')
+
+extractHttpLinksFromFile('../prueba/leg.md')
   .then((paths) => {
-    console.log(paths); // los datos reales se muestran aquí
+    console.log('paths', JSON.stringify(paths, null, 2));
   })
   .catch((error) => {
-    console.error(error); // si se produce un error, se muestra aquí
+    console.error(error);
   });
+
 
 
 // Fumcion recursiva-----------------------------------------------
 
-const findMarkdownFiles = (dirPath, results = []) => {
-  const files = fs.readdirSync(dirPath);
+export const findMarkdownFiles = (dirPath, results = []) => {
+  const files = readdirSync(dirPath);
   for (const file of files) {
     const filePath = path.join(dirPath, file);
-    const stat = fs.statSync(filePath);
+    const stat = statSync(filePath);
     if (stat.isDirectory()) {
       findMarkdownFiles(filePath, results);
     } else if (path.extname(filePath) === '.md') {
@@ -115,36 +117,40 @@ const findMarkdownFiles = (dirPath, results = []) => {
 
 // Status del link --------------------------------------------------------------------
 
-const axios = require('axios');
 
-function linkIsActive(arrLinks) {
+export function linkIsActive(arrLinks) {
   return Promise.all(arrLinks.map((link) => {
     return axios.get(link.href)
       .then((response) => {
         link.message = 'Ok';
         link.status = response.status;
+        console.log(JSON.stringify(link, null, 2));
         return link;
       })
       .catch((error) => {
         link.message = 'Fail';
         link.status = error.response ? error.response.status : 'Error request';
+        console.log(JSON.stringify(link, null, 2));
         return link;
       });
   }));
 }
+
 
 const links = [
   { href: 'https://www.google.com', text: 'Google' },
   { href: 'https://www.github.com', text: 'GitHub' },
 ];
 
-// linkIsActive(links)
-//   .then((results) => {
-//     console.log(results);
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });
+linkIsActive(links)
+  .then((results) => {
+    console.log('avero')
+
+    console.log(results);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 
 // toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
@@ -153,16 +159,3 @@ const links = [
 //   console.error("error" + err);
 
 // });
-
-module.exports = {
-  existsPath,
-  absolutePath,
-  isDirectory,
-  isFile,
-  fileMd,
-  readFileMd,
-  readDirectory,
-  extractHttpLinksFromFile,
-  findMarkdownFiles,
-  linkIsActive,
-};
