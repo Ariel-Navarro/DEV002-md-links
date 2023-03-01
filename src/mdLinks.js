@@ -32,21 +32,19 @@ const mdLinks = (path, options) => {
     if (existsPath(path)) {
       absolutePath(path)
       if ((findMarkdownFiles(path).length) > 0) {
-        const arrLinks = extractHttpLinksFromFile(path)
-        .then((paths) => {
-          console.log('paths', JSON.stringify(paths, null, 2));
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-        console.log(arrLinks)
-        if (options && options.validate === true) {
-          console.log(arrLinks)
-          linkIsActive(arrLinks)
-            .then((res) => resolve(res));
-        } else {
-          resolve(arrLinks);
-        }
+        extractHttpLinksFromFile(path)
+          .then((arrLinks) => {
+            console.log('arrLinks', JSON.stringify(arrLinks, null, 2));
+            if (options && options.validate === true) {
+              linkIsActive(arrLinks)
+                .then((res) => resolve(res));
+            } else {
+              resolve(arrLinks);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       } else {
         // eslint-disable-next-line prefer-promise-reject-errors
         reject('No Markdown (.md) files found');
@@ -60,3 +58,4 @@ const mdLinks = (path, options) => {
 
 console.log(mdLinks('../prueba', { validate: true }))
 export default mdLinks
+

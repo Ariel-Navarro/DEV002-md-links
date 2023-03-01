@@ -81,13 +81,13 @@ export const extractHttpLinksFromFile = (ruta) => {
 
 
 
-extractHttpLinksFromFile('../prueba/leg.md')
-  .then((paths) => {
-    console.log('paths', JSON.stringify(paths, null, 2));
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// extractHttpLinksFromFile('../prueba/leg.md')
+//   .then((paths) => {
+//     console.log('paths', JSON.stringify(paths, null, 2));
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
 
 
 
@@ -142,15 +142,15 @@ const links = [
   { href: 'https://www.github.com', text: 'GitHub' },
 ];
 
-linkIsActive(links)
-  .then((results) => {
-    console.log('avero')
+// linkIsActive(links)
+//   .then((results) => {
+//     console.log('avero')
 
-    console.log(results);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+//     console.log(results);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
 
 
 // toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
