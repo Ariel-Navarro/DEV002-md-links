@@ -38,5 +38,5 @@ if (command.length) {
   console.log(helpMessage);
 }
 
-// node cli.js ../prueba/leg.md --validate --stats
+// node cli.js ../prueba/leg.md --h
 // node cli.js ../prueba/leg.md --validate --stats

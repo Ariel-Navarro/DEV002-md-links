@@ -57,6 +57,6 @@ const mdLinks = (path, options) => {
   })
 }
 
-console.log(mdLinks('../prueba/prueba2', { validate: true }))
+// console.log(mdLinks('../prueba/prueba2', { validate: true }))
 export default mdLinks
 

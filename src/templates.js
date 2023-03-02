@@ -19,7 +19,7 @@ export const helpMessage = `
 
   ${chalk.white.bold.underline('For example:')} in this case we will enter the name of a directory:
 
-  $ sanmdlinks prueba-1 --validate
+  $ mdLinks prueba-1 --validate
   ╔
   ║ ${chalk.rgb(168, 159, 241)('• href:')} 'https://www.npmjs.com/',
   ║ ${chalk.rgb(168, 159, 241)('• text:')} 'Sitio oficial de npm (en inglés)',
@@ -28,11 +28,11 @@ export const helpMessage = `
   ║ ${chalk.cyan('status: 200')}
   ╚
   --------------------------------------------------------------------------------------------------------
-  $ sanmdlinks prueba-1 --stats
+  $ mdLinks prueba-1 --stats
   ${chalk.rgb(168, 159, 241)('• Total:')}: 3
   ${chalk.rgb(168, 159, 241)('• Unique:')} 3
   --------------------------------------------------------------------------------------------------------
-  $ sanmdlinks prueba.md --validate --stats
+  $ mdLinks prueba.md --validate --stats
   ${chalk.rgb(168, 159, 241)('• Total:')} 3
   ${chalk.rgb(168, 159, 241)('• Unique:')} 3
   ${chalk.rgb(168, 159, 241)('• Broken:')} 1
