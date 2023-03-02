@@ -47,13 +47,13 @@ export const validateFalseMessage = (resParameter) => resParameter.forEach((el) 
 export const messageSuccces = (resParameter) => {
   resParameter.forEach((el) => {
     if (el.message === 'Ok') {
-      console.log(` ${rgb(168, 159, 241)('• href:')} ${el.href},
+      console.log(` ${chalk.rgb(168, 159, 241)('• href:')} ${el.href},
  ${rgb(168, 159, 241)('• text:')} ${el.text},
  ${rgb(168, 159, 241)('• file:')} ${el.file},
  ${cyan('message:')} ${el.message},
  ${cyan('status:')} ${el.status}`);
     } else {
-      console.log(` ${rgb(168, 159, 241)('• href:')} ${el.href},
+      console.log(` ${chalk.rgb(168, 159, 241)('• href:')} ${el.href},
  ${rgb(168, 159, 241)('• text:')} ${el.text},
  ${rgb(168, 159, 241)('• file:')} ${el.file},
  ${red('message:')} ${el.message},
