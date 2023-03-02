@@ -93,22 +93,33 @@ export const extractHttpLinksFromFile = (ruta) => {
 
 // Fumcion recursiva-----------------------------------------------
 
-export const findMarkdownFiles = (dirPath, results = []) => {
-  const files = readdirSync(dirPath);
-  for (const file of files) {
-    const filePath = path.join(dirPath, file);
-    const stat = statSync(filePath);
-    if (stat.isDirectory()) {
-      findMarkdownFiles(filePath, results);
-    } else if (path.extname(filePath) === '.md') {
-      results.push(path.resolve(filePath));
+export const findMarkdownFiles = (pathParam) => {
+  const results = [];
+
+  // Verificar si el path es un archivo con extensión .md
+  if (isFile(pathParam) && fileMd(pathParam)) {
+    results.push(absolutePath(pathParam));
+  }
+
+  // Verificar si el path es un directorio
+  if (isDirectory(pathParam)) {
+    const files = readdirSync(pathParam);
+    for (const file of files) {
+      const filePath = path.join(pathParam, file);
+      if (isFile(filePath) && fileMd(filePath)) {
+        results.push(absolutePath(filePath));
+      } else if (isDirectory(filePath)) {
+        results.push(...findMarkdownFiles(filePath));
+      }
     }
   }
+
   return results;
 };
 
+
 // Ejemplo de uso:
-// const dirPath = './prueba2';
+// const dirPath = '../prueba/leg.md';
 // const markdownFiles = findMarkdownFiles(dirPath);
 // console.log(markdownFiles);
 

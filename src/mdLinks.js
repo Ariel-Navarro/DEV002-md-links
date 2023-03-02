@@ -25,6 +25,7 @@
 
 // console.log(mdLinks('../prueba'))
 // export default mdLinks
+
 import { existsPath, absolutePath, findMarkdownFiles, extractHttpLinksFromFile, linkIsActive } from './api2.js';
 
 const mdLinks = (path, options) => {
@@ -56,6 +57,6 @@ const mdLinks = (path, options) => {
   })
 }
 
-console.log(mdLinks('../prueba', { validate: true }))
+console.log(mdLinks('../prueba/prueba2', { validate: true }))
 export default mdLinks
 

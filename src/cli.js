@@ -1,5 +1,5 @@
 import  mdLinks  from './mdLinks.js';
-import infoTRB from './index.js';
+import {totalLinks, brokenLinkStat, uniqueLinkStat} from './index.js';
 import { helpMessage, validateFalseMessage, messageSuccces } from './templates.js';
 const command = process.argv;
 const path = process.argv[2];
@@ -21,7 +21,7 @@ if (command.length) {
       .catch((err) => console.log(err));
   } else if (option1 === '--stats' || option1 === '--s') {
     mdLinks(path, { validate: true })
-      .then((res) => console.log(infoTRB.totalStat(res), infoTRB.uniqueLinkStat(res)))
+      .then((res) => console.log(totalLinks(res), uniqueLinkStat(res)))
       .catch((err) => console.log(err));
   } else if (option1 === '--h' || option1 === '--help') {
     console.log(helpMessage);
@@ -31,7 +31,7 @@ if (command.length) {
 
   if ((option1 === '--validate' || '--v') && (option2 === '--stats' || '--v')) {
     mdLinks(path, { validate: true })
-      .then((res) => console.log(infoTRB.totalStat(res), infoTRB.uniqueLinkStat(res), infoTRB.brokenLinkStat(res)))
+      .then((res) => console.log(totalLinks(res), uniqueLinkStat(res), brokenLinkStat(res)))
       .catch((err) => console.log(err));
   }
 } else {
