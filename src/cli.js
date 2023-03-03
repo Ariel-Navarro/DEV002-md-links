@@ -1,6 +1,6 @@
 import  mdLinks  from './mdLinks.js';
 import {totalLinks, brokenLinkStat, uniqueLinkStat} from './index.js';
-import { helpMessage, validateFalseMessage, messageSuccces } from './templates.js';
+import { helpMessage, validateFalseMessage, messageSuccess } from './templates.js';
 const command = process.argv;
 const path = process.argv[2];
 const option1 = command[3];
@@ -17,7 +17,7 @@ if (command.length) {
 
   if (option1 === '--validate' || option1 === '--v') {
     mdLinks(path, { validate: true })
-      .then((res) => messageSuccces(res))
+      .then((res) => messageSuccess(res))
       .catch((err) => console.log(err));
   } else if (option1 === '--stats' || option1 === '--s') {
     mdLinks(path, { validate: true })

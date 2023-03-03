@@ -44,20 +44,21 @@ export const validateFalseMessage = (resParameter) => resParameter.forEach((el) 
 ║ ${chalk.rgb(168, 159, 241)('• file: ')} ${el.file}
 ╚`));
 
-export const messageSuccces = (resParameter) => {
+export const messageSuccess = (resParameter) => {
   resParameter.forEach((el) => {
     if (el.message === 'Ok') {
       console.log(` ${chalk.rgb(168, 159, 241)('• href:')} ${el.href},
- ${rgb(168, 159, 241)('• text:')} ${el.text},
- ${rgb(168, 159, 241)('• file:')} ${el.file},
- ${cyan('message:')} ${el.message},
- ${cyan('status:')} ${el.status}`);
+ ${chalk.rgb(168, 159, 241)('• text:')} ${el.text},
+ ${chalk.rgb(168, 159, 241)('• file:')} ${el.file},
+ ${chalk.cyan('message:')} ${el.message},
+ ${chalk.cyan('status:')} ${el.status}`);
     } else {
       console.log(` ${chalk.rgb(168, 159, 241)('• href:')} ${el.href},
- ${rgb(168, 159, 241)('• text:')} ${el.text},
- ${rgb(168, 159, 241)('• file:')} ${el.file},
- ${red('message:')} ${el.message},
- ${red('status:')} ${el.status}`);
+ ${chalk.rgb(168, 159, 241)('• text:')} ${el.text},
+ ${chalk.rgb(168, 159, 241)('• file:')} ${el.file},
+ ${chalk.red('message:')} ${el.message},
+ ${chalk.red('status:')} ${el.status}`);
     }
   });
 };
+
