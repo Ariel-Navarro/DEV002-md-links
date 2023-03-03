@@ -99,10 +99,8 @@ export const findMarkdownFiles = (pathParam) => {
   // Verificar si el path es un archivo con extensión .md
   if (isFile(pathParam) && fileMd(pathParam)) {
     results.push(absolutePath(pathParam));
-  }
 
-  // Verificar si el path es un directorio
-  if (isDirectory(pathParam)) {
+  } else if (isDirectory(pathParam)) {
     const files = readdirSync(pathParam);
     for (const file of files) {
       const filePath = path.join(pathParam, file);
@@ -113,17 +111,35 @@ export const findMarkdownFiles = (pathParam) => {
       }
     }
   }
-
   return results;
 };
 
 
+
+
+
+// export const findMarkdownFiles = (pathParam) => {
+//   const results = [];
+
+//   const files = readdirSync(pathParam);
+//   for (const file of files) {
+//     const filePath = path.join(pathParam, file);
+//     if (isFile(filePath)) {
+//       if (fileMd(filePath)) {
+//         results.push(absolutePath(filePath));
+//       }
+//     } else if (isDirectory(filePath)) {
+//       results.push(...findMarkdownFiles(filePath));
+//     }
+//   }
+
+//   return results;
+// };
+
 // Ejemplo de uso:
-// const dirPath = '../prueba/leg.md';
+// const dirPath = '../prueba';
 // const markdownFiles = findMarkdownFiles(dirPath);
 // console.log(markdownFiles);
-
-
 
 
 // Status del link --------------------------------------------------------------------
@@ -135,13 +151,13 @@ export function linkIsActive(arrLinks) {
       .then((response) => {
         link.message = 'Ok';
         link.status = response.status;
-        console.log(JSON.stringify(link, null, 2));
+        // console.log(JSON.stringify(link, null, 2));
         return link;
       })
       .catch((error) => {
         link.message = 'Fail';
         link.status = error.response ? error.response.status : 'Error request';
-        console.log(JSON.stringify(link, null, 2));
+        // console.log(JSON.stringify(link, null, 2));
         return link;
       });
   }));

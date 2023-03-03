@@ -60,6 +60,42 @@
 // // console.log(mdLinks('../prueba/prueba2', { validate: true }))
 // export default mdLinks
 
+// import { existsPath, absolutePath, findMarkdownFiles, extractHttpLinksFromFile, linkIsActive } from './api2.js';
+
+// const mdLinks = (path, options) => {
+//   return new Promise((resolve, reject) => {
+//     if (existsPath(path)) {
+//       absolutePath(path);
+//       if ((findMarkdownFiles(path).length) > 0) {
+//         extractHttpLinksFromFile(path)
+//           .then((arrLinks) => {
+//             console.log('arrLinks', JSON.stringify(arrLinks, null, 2));
+//             if (options && options.validate === true) {
+//               linkIsActive(arrLinks)
+//                 .then((res) => resolve(res))
+//                 .catch((error) => {
+//                   console.error(error);
+//                   reject(error);
+//                 });
+//             } else {
+//               resolve(arrLinks);
+//             }
+//           })
+//           .catch((error) => {
+//             console.error(error);
+//             reject(error);
+//           });
+//       } else {
+//         reject('No Markdown (.md) files found');
+//       }
+//     } else {
+//       reject('The path does not exist. Did you mean --help?');
+//     }
+//   });
+// };
+
+// export default mdLinks;
+
 import { existsPath, absolutePath, findMarkdownFiles, extractHttpLinksFromFile, linkIsActive } from './api2.js';
 
 const mdLinks = (path, options) => {
@@ -67,24 +103,18 @@ const mdLinks = (path, options) => {
     if (existsPath(path)) {
       absolutePath(path);
       if ((findMarkdownFiles(path).length) > 0) {
+        console.log(`Markdown files found: ${findMarkdownFiles(path)}`);
         extractHttpLinksFromFile(path)
           .then((arrLinks) => {
-            console.log('arrLinks', JSON.stringify(arrLinks, null, 2));
             if (options && options.validate === true) {
               linkIsActive(arrLinks)
                 .then((res) => resolve(res))
-                .catch((error) => {
-                  console.error(error);
-                  reject(error);
-                });
+                .catch((error) => reject(error));
             } else {
               resolve(arrLinks);
             }
           })
-          .catch((error) => {
-            console.error(error);
-            reject(error);
-          });
+          .catch((error) => reject(error));
       } else {
         reject('No Markdown (.md) files found');
       }
@@ -93,5 +123,7 @@ const mdLinks = (path, options) => {
     }
   });
 };
-
+mdLinks('../prueba', { validate: true })
+  .then(links => console.log(links))
+  .catch(err => console.log(err));
 export default mdLinks;
