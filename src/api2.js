@@ -1,8 +1,12 @@
-import path from 'path';
-import { existsSync, statSync, readFile, readdirSync } from 'fs';
+import { resolve } from 'path';
+import { lstatSync, existsSync, statSync, readFile, readdirSync } from 'fs';
 import axios from 'axios';
 import { parse } from 'marked';
 import { JSDOM } from 'jsdom';
+// const fs = require('fs');
+
+const routeDirectory = (parameter) => lstatSync(parameter).isDirectory();
+// console.log(routeDirectory('../prueba/leg.md'))
 
 // ¿Existe la ruta?
 export const existsPath = (pathParam) => existsSync(pathParam);
@@ -24,26 +28,50 @@ export const isFile = (pathParam) => statSync(pathParam).isFile();
 export const fileMd = (pathParam) => path.extname(pathParam) === '.md';
 // console.log(fileMd('../prueba/prueba.js'));
 
-// Leer el archivo
-export const readFileMd = (pathParam) => {
-  return new Promise((resolve, reject) => {
-    readFile(pathParam, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
+// export const readFileMd = (pathParam) => {
+//   return new Promise((resolve, reject) => {
+//     readFile(pathParam, 'utf8', (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(data);
+//       }
+//     });
+//   });
+// };
+
+// Fumcion recursiva-----------------------------------------------
+const results = [];
+
+export const findMarkdownFiles = (pathParam) => {
+  // Verificar si el path es un archivo con extensión .md
+  if (isFile(pathParam) && fileMd(pathParam)) {
+    results.push(absolutePath(pathParam));
+  } else if (isDirectory(pathParam)) {
+    const files = readdirSync(pathParam);
+    // console.log('files' + files)
+    for (const file of files) {
+      // console.log('file' + file)
+      const filePath = path.join(pathParam, file);
+      // console.log('filePath' + filePath)
+      if (isFile(filePath) && fileMd(filePath)) {
+        results.push(absolutePath(filePath));
+      } else if (isDirectory(filePath)) {
+        findMarkdownFiles(filePath);
       }
-    });
-  });
+    }
+  }
+  // console.log('results' + results)
+  return results;
 };
 
-// ejemplo de uso
-// readFileMd('./prueba.md')
-//   .then((data) => console.log("data:"+data))
-//   .catch((err) => console.error(err));
+// console.log(findMarkdownFiles('../prueba'))
+
+// Leer el archivo
+
 
 // Leer el directorio
-export const readDirectory = (pathParam) => readdirSync(pathParam);
+// export const readDirectory = (pathParam) => readdirSync(pathParam);
 // console.log(readDirectory('../prueba'));
 
 
@@ -51,16 +79,22 @@ export const readDirectory = (pathParam) => readdirSync(pathParam);
 
 
 export const extractHttpLinksFromFile = (ruta) => {
-  const concatPath = path.resolve(ruta); // obtiene la ruta absoluta del archivo
-  const readFileMd = (pathParam) => {
+  // const concatPath = resolve(ruta); // obtiene la ruta absoluta del archivo
+  // console.log('concatPath',concatPath)
+  const array = [];
+  // const readFileMd = (pathParam) => {
+  findMarkdownFiles(ruta).forEach((file) => {
     return new Promise((resolve, reject) => {
-      readFile(pathParam, 'utf8', (err, data) => {
+      readFile(file, 'utf8', (err, data) => {
         if (err) {
+          console.log('error del if', err)
           reject(err);
         } else {
           const paths = []
           const fileToHtml = parse(data);
+          console.log('filetohtml', fileToHtml)
           const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+          console.log('dom', dom)
           dom.forEach((el) => {
             if (el.href.slice(0, 3) === 'htt') {
               paths.push({
@@ -70,77 +104,19 @@ export const extractHttpLinksFromFile = (ruta) => {
               });
             }
           });
+          console.log('paths', paths)
           resolve(paths);
         }
       });
     });
-  };
-  return readFileMd(concatPath).then((data) => data.flat(1));
+  })
+
+  // };
+  // return readFileMd(concatPath).then((data) => {
+  //   const a = data.flat(1)
+  //   console.log('a',a)
+  // })
 }
-
-
-
-
-// extractHttpLinksFromFile('../prueba/leg.md')
-//   .then((paths) => {
-//     console.log('paths', JSON.stringify(paths, null, 2));
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
-
-
-
-// Fumcion recursiva-----------------------------------------------
-
-export const findMarkdownFiles = (pathParam) => {
-  const results = [];
-
-  // Verificar si el path es un archivo con extensión .md
-  if (isFile(pathParam) && fileMd(pathParam)) {
-    results.push(absolutePath(pathParam));
-
-  } else if (isDirectory(pathParam)) {
-    const files = readdirSync(pathParam);
-    for (const file of files) {
-      const filePath = path.join(pathParam, file);
-      if (isFile(filePath) && fileMd(filePath)) {
-        results.push(absolutePath(filePath));
-      } else if (isDirectory(filePath)) {
-        results.push(...findMarkdownFiles(filePath));
-      }
-    }
-  }
-  return results;
-};
-
-
-
-
-
-// export const findMarkdownFiles = (pathParam) => {
-//   const results = [];
-
-//   const files = readdirSync(pathParam);
-//   for (const file of files) {
-//     const filePath = path.join(pathParam, file);
-//     if (isFile(filePath)) {
-//       if (fileMd(filePath)) {
-//         results.push(absolutePath(filePath));
-//       }
-//     } else if (isDirectory(filePath)) {
-//       results.push(...findMarkdownFiles(filePath));
-//     }
-//   }
-
-//   return results;
-// };
-
-// Ejemplo de uso:
-// const dirPath = '../prueba';
-// const markdownFiles = findMarkdownFiles(dirPath);
-// console.log(markdownFiles);
-
 
 // Status del link --------------------------------------------------------------------
 
@@ -161,13 +137,7 @@ export function linkIsActive(arrLinks) {
         return link;
       });
   }));
-}
-
-
-const links = [
-  { href: 'https://www.google.com', text: 'Google' },
-  { href: 'https://www.github.com', text: 'GitHub' },
-];
+};
 
 // linkIsActive(links)
 //   .then((results) => {
@@ -178,6 +148,7 @@ const links = [
 //   .catch((err) => {
 //     console.error(err);
 //   });
+
 
 
 // toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
