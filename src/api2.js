@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve, join, extname, isAbsolute } from 'path';
 import { lstatSync, existsSync, statSync, readFile, readdirSync } from 'fs';
 import axios from 'axios';
 import { parse } from 'marked';
@@ -13,7 +13,7 @@ export const existsPath = (pathParam) => existsSync(pathParam);
 // console.log(existsPath('../prueba/prueba.js'));
 
 // ¿Es una ruta absoluta? Si no lo es, lo convierte a absoluta
-export const absolutePath = (pathParam) => path.isAbsolute(pathParam) ? pathParam : path.resolve(pathParam);
+export const absolutePath = (pathParam) => isAbsolute(pathParam) ? pathParam : resolve(pathParam);
 // console.log(absolutePath('../prueba/prueba.js'));
 
 // ¿El parametro es un directorio?
@@ -25,7 +25,7 @@ export const isFile = (pathParam) => statSync(pathParam).isFile();
 // console.log(isFile('../prueba/prueba.txt'));
 
 // ¿Tiene extensión .md?
-export const fileMd = (pathParam) => path.extname(pathParam) === '.md';
+export const fileMd = (pathParam) => extname(pathParam) === '.md';
 // console.log(fileMd('../prueba/prueba.js'));
 
 // export const readFileMd = (pathParam) => {
@@ -52,7 +52,7 @@ export const findMarkdownFiles = (pathParam) => {
     // console.log('files' + files)
     for (const file of files) {
       // console.log('file' + file)
-      const filePath = path.join(pathParam, file);
+      const filePath = join(pathParam, file);
       // console.log('filePath' + filePath)
       if (isFile(filePath) && fileMd(filePath)) {
         results.push(absolutePath(filePath));
@@ -79,44 +79,39 @@ export const findMarkdownFiles = (pathParam) => {
 
 
 export const extractHttpLinksFromFile = (ruta) => {
-  // const concatPath = resolve(ruta); // obtiene la ruta absoluta del archivo
-  // console.log('concatPath',concatPath)
-  const array = [];
-  // const readFileMd = (pathParam) => {
-  findMarkdownFiles(ruta).forEach((file) => {
-    return new Promise((resolve, reject) => {
+  let array = [];
+  const as = findMarkdownFiles(ruta).map((file) => {
+    return new Promise((resolve) => {
       readFile(file, 'utf8', (err, data) => {
         if (err) {
-          console.log('error del if', err)
-          reject(err);
+          resolve(err);
         } else {
-          const paths = []
           const fileToHtml = parse(data);
-          console.log('filetohtml', fileToHtml)
           const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
-          console.log('dom', dom)
           dom.forEach((el) => {
             if (el.href.slice(0, 3) === 'htt') {
-              paths.push({
+              array.push({
                 href: el.href,
                 text: (el.textContent).slice(0, 50),
-                file: concatPath,
+                file: ruta,
               });
             }
           });
-          console.log('paths', paths)
-          resolve(paths);
+          resolve(array.flat(1));
         }
       });
     });
-  })
-
-  // };
-  // return readFileMd(concatPath).then((data) => {
-  //   const a = data.flat(1)
-  //   console.log('a',a)
-  // })
+  });
+  return Promise.all(as);
 }
+
+// console.log(extractHttpLinksFromFile('../prueba'))
+// .then((links) => {
+//   console.log("Links: " + links);
+// })
+// .catch((err) => {
+//   console.error("Error: " + err);
+// });
 
 // Status del link --------------------------------------------------------------------
 
@@ -139,6 +134,16 @@ export function linkIsActive(arrLinks) {
   }));
 };
 
+let arrLinks;
+extractHttpLinksFromFile('../prueba').then((response) => {
+  arrLinks = response;
+  linkIsActive(arrLinks).then( value => console.log(value));
+
+})
+  .catch((err) => {
+    console.log(err)
+  })
+
 // linkIsActive(links)
 //   .then((results) => {
 //     console.log('avero')
@@ -149,11 +154,3 @@ export function linkIsActive(arrLinks) {
 //     console.error(err);
 //   });
 
-
-
-// toHtmlAndExtractLinks('../prueba/prueba2/prueba3/hijoDePrueba3').then((links) => {
-//   console.log("Links" *links);
-// }).catch((err) => {
-//   console.error("error" + err);
-
-// });
