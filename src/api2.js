@@ -117,40 +117,39 @@ export const extractHttpLinksFromFile = (ruta) => {
 
 
 export function linkIsActive(arrLinks) {
-  return Promise.all(arrLinks.map((link) => {
-    return axios.get(link.href)
-      .then((response) => {
-        link.message = 'Ok';
-        link.status = response.status;
-        // console.log(JSON.stringify(link, null, 2));
-        return link;
-      })
-      .catch((error) => {
-        link.message = 'Fail';
-        link.status = error.response ? error.response.status : 'Error request';
-        // console.log(JSON.stringify(link, null, 2));
-        return link;
-      });
-  }));
+
+  const sa = arrLinks.map((link) => {
+    return new Promise((resolve) => {
+      return axios.get(link.href)
+        .then((response) => {
+          console.log('link', link)
+          
+          link.message = 'Ok';
+          link.status = response.status;
+          // console.log(JSON.stringify(link, null, 2));
+          // console.log(link)
+        resolve(link.flat(1));
+        })
+        .catch((error) => {
+          link.message = 'Fail';
+          link.status = error.response ? error.response.status : 'Error request';
+          // console.log(JSON.stringify(link, null, 2));
+          // console.log('LINK',link)
+          resolve(link);
+        });
+    })
+  });
+  return Promise.all(sa)
 };
 
 let arrLinks;
 extractHttpLinksFromFile('../prueba').then((response) => {
   arrLinks = response;
-  linkIsActive(arrLinks).then( value => console.log(value));
-
-})
+  linkIsActive(arrLinks).then(value => {
+    console.log('VALUE',value);
+    // console.log(arrLinks, arrLinks.flat(1))
+  })
   .catch((err) => {
     console.log(err)
   })
-
-// linkIsActive(links)
-//   .then((results) => {
-//     console.log('avero')
-
-//     console.log(results);
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });
-
+})

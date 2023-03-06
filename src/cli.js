@@ -6,6 +6,8 @@ const path = process.argv[2];
 const option1 = command[3];
 const option2 = command[4];
 
+console.log('hola')
+
 if (command.length) {
   if (path === '--h' || path === '--help') {
     console.log(helpMessage);
