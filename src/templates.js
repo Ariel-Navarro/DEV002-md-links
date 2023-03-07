@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 
-import chalk from "chalk";
+const chalk = require('chalk');
 
-export const introMessage = ' Welcome to sanmdlinks! This is a tool that allows you to identify the state of the links of the desired Markdown (.md) file.'
+ const introMessage = ' Welcome to sanmdlinks! This is a tool that allows you to identify the state of the links of the desired Markdown (.md) file.'
 + ' It offers \n support for both files and directories. Also, it lets you know some interesting statistics! \n'
 + ` To know how it works, please type the command ${chalk.white.bold('--h')} to offer help. \n`;
 
-export const helpMessage = `
-  ${chalk.white.bold.underline('Usage:')} ${chalk.rgb(168, 159, 241)('sanmdlinks')} <path-to-file> ${chalk.rgb(239, 255, 0)('[options]')}
+ const helpMessage = `
+  ${chalk.white.bold.underline('Usage:')} ${chalk.rgb(168, 159, 241)('mdLinks')} <path-to-file> ${chalk.rgb(239, 255, 0)('[options]')}
 
   ${chalk.white.bold.underline('Options:')}
 
@@ -19,7 +19,7 @@ export const helpMessage = `
 
   ${chalk.white.bold.underline('For example:')} in this case we will enter the name of a directory:
 
-  $ mdLinks prueba-1 --validate
+  $ mdLinks prueba --validate
   ╔
   ║ ${chalk.rgb(168, 159, 241)('• href:')} 'https://www.npmjs.com/',
   ║ ${chalk.rgb(168, 159, 241)('• text:')} 'Sitio oficial de npm (en inglés)',
@@ -28,7 +28,7 @@ export const helpMessage = `
   ║ ${chalk.cyan('status: 200')}
   ╚
   --------------------------------------------------------------------------------------------------------
-  $ mdLinks prueba-1 --stats
+  $ mdLinks prueba --stats
   ${chalk.rgb(168, 159, 241)('• Total:')}: 3
   ${chalk.rgb(168, 159, 241)('• Unique:')} 3
   --------------------------------------------------------------------------------------------------------
@@ -38,13 +38,13 @@ export const helpMessage = `
   ${chalk.rgb(168, 159, 241)('• Broken:')} 1
 `;
 
-export const validateFalseMessage = (resParameter) => resParameter.forEach((el) => console.log(`╔
+ const validateFalseMessage = (resParameter) => resParameter.forEach((el) => console.log(`╔
 ║ ${chalk.rgb(168, 159, 241)('• href: ')} ${el.href},
 ║ ${chalk.rgb(168, 159, 241)('• text: ')} ${el.text},
 ║ ${chalk.rgb(168, 159, 241)('• file: ')} ${el.file}
 ╚`));
 
-export const messageSuccess = (resParameter) => {
+ const messageSuccess = (resParameter) => {
   resParameter.forEach((el) => {
     if (el.message === 'Ok') {
       console.log(` ${chalk.rgb(168, 159, 241)('• href:')} ${el.href},
@@ -62,3 +62,9 @@ export const messageSuccess = (resParameter) => {
   });
 };
 
+module.exports = {
+  introMessage,
+  helpMessage,
+  validateFalseMessage,
+  messageSuccess,
+}

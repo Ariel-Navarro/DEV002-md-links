@@ -1,43 +1,41 @@
-import  mdLinks  from './mdLinks.js';
-import {totalLinks, brokenLinkStat, uniqueLinkStat} from './index.js';
-import { helpMessage, validateFalseMessage, messageSuccess } from './templates.js';
+const mdLinks = require("./mdLinks");
+const index = require("./index");
+const templates = require("./templates");
 const command = process.argv;
 const path = process.argv[2];
 const option1 = command[3];
 const option2 = command[4];
 
-console.log('hola')
-
 if (command.length) {
   if (path === '--h' || path === '--help') {
-    console.log(helpMessage);
+    console.log(templates.helpMessage);
   } else {
-    mdLinks(path, { validate: false })
-      .then((res) => validateFalseMessage(res))
+    mdLinks.mdLinks(path, { validate: false })
+      .then((res) => templates.validateFalseMessage(res))
       .catch((err) => console.log(err));
   }
 
   if (option1 === '--validate' || option1 === '--v') {
-    mdLinks(path, { validate: true })
-      .then((res) => messageSuccess(res))
+    mdLinks.mdLinks(path, { validate: true })
+      .then((res) => templates.messageSuccess(res))
       .catch((err) => console.log(err));
   } else if (option1 === '--stats' || option1 === '--s') {
-    mdLinks(path, { validate: true })
-      .then((res) => console.log(totalLinks(res), uniqueLinkStat(res)))
+    mdLinks.mdLinks(path, { validate: true })
+      .then((res) => console.log(index.totalLinks(res), index.uniqueLinkStat(res)))
       .catch((err) => console.log(err));
   } else if (option1 === '--h' || option1 === '--help') {
-    console.log(helpMessage);
+    console.log(templates.helpMessage);
   } else {
-    console.log(helpMessage);
+    console.log(templates.helpMessage);
   }
 
   if ((option1 === '--validate' || '--v') && (option2 === '--stats' || '--v')) {
-    mdLinks(path, { validate: true })
-      .then((res) => console.log(totalLinks(res), uniqueLinkStat(res), brokenLinkStat(res)))
+    mdLinks.mdLinks(path, { validate: true })
+      .then((res) => console.log(index.totalLinks(res), index.uniqueLinkStat(res), index.brokenLinkStat(res)))
       .catch((err) => console.log(err));
   }
 } else {
-  console.log(helpMessage);
+  console.log(templates.helpMessage);
 }
 
 
