@@ -4,7 +4,6 @@ const  axios  = require("axios")
 const { marked } = require("marked");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const cheerio = require('cheerio');
 
 // console.log(axios)
 
@@ -52,7 +51,6 @@ const findMarkdownFiles = (pathParam) => {
       }
     }
   }
-  // console.log('RESULTADOSSSS' + results)
   return results;
 };
 
@@ -87,57 +85,6 @@ const extractHttpLinksFromFile = (routeParameter) => {
   return arrDom.flat(1);
 };
 
-
-const dom = new JSDOM(`<!DOCTYPE html><a>Hello world</a><p>Hello</p>`);
-// console.log(dom.window.document.querySelector("p").textContent);
-
-// const extractHttpLinksFromFile = (ruta) => {
-//   let objt = {};
-//   const as = findMarkdownFiles(ruta).map((file) => {
-//     return new Promise((resolve) => {
-//       fs.readFile(file, 'utf8', (err, data) => {
-//         if (err) {
-//           resolve(err);
-//         } else {
-//           const fileToHtml = marked.parse(data);
-//           console.log(fileToHtml)
-//           let $ = cheerio.load(fileToHtml);
-//           console.log('TESTEO', $.attr('a'))
-
-// const dom = new JSDOM(fileToHtml);
-// let test = dom.window.document.querySelectorAll('a');
-// console.log('dom', test);
-// test.forEach((el) => {
-//   if (el.href.slice(0, 3) === 'htt') {
-//     // console.log('el', el)
-//     objt = {
-//       href: el.href,
-//       text: (el.textContent).slice(0, 50),
-//       file: ruta,
-//     };
-//     resolve(objt);
-//   }
-// });
-// console.log('array', objt)
-// resolve(objt);
-//         }
-//       });
-//     });
-//   });
-//   return Promise.all(as);
-// }
-
-// console.log(extractHttpLinksFromFile('../prueba'))
-
-
-// extractHttpLinksFromFile('../prueba')
-//   .then((links) => {
-//     console.log("Links .flat(2): " + links);
-//   })
-//   .catch((err) => {
-//     console.error("Error: " + err);
-//   });
-
 // // Status del link --------------------------------------------------------------------
 
 
@@ -159,32 +106,6 @@ const dom = new JSDOM(`<!DOCTYPE html><a>Hello world</a><p>Hello</p>`);
   });
   return Promise.all(sa)
 };
-
-
-// let arrLinks;
-// const prueba = extractHttpLinksFromFile('../prueba/leg.md')
-// console.log(prueba)
-
-// const prueba2 = linkIsActive(prueba)
-// linkIsActive(prueba)
-// .then((reso) => {
-//       console.log(reso);
-//     })
-//     .catch((err) => {
-//       console.error("Error: " + err);
-//     });
-// console.log('prueba2',prueba2)
-// .then((response) => {
-//   arrLinks = response.flat(1);
-//   // console.log('arrLinks', arrLinks)
-//   linkIsActive(arrLinks).then(value => {
-//     console.log('VALUE',value.flat(1));
-//     // console.log(arrLinks, arrLinks.flat(1))
-//   })
-//   .catch((err) => {
-//     console.log(err)
-//   })
-// })
 
 module.exports = {
   routeDirectory,
